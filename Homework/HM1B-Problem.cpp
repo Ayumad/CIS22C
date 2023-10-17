@@ -1,5 +1,5 @@
 //  This file will contain all the code for Homework 1. Program execution begins and ends here.
-//
+// Ayush Madhukar CIS 22C Spring
 
 
 using namespace std;
@@ -69,7 +69,10 @@ class StudentEsa
 // ****************  Constructors / Destructor
 
 StudentEsa (int ms);         //  1. Normal Constructor.  Create ESA of this size.  May need to be resized later
-
+StudentEsa(int ms) {
+    sap = new Student* [cmz = ms];
+    cnum = 0; tp = NULL;
+}
      //  *** The code for this might look like:
      //
      //  StudentEsa(int ms) { // Allocate Enhanced Student Array capable of holding this many Student Ptrs
