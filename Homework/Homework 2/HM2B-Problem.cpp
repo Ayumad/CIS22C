@@ -1,9 +1,8 @@
 /// CIS22C-HM2B : This single file will contain all the code for Homework 2. Program execution begins and ends here (in main).
 //
-
-using namespace std;
 #include <iostream>
 #include <fstream>
+using namespace std;
 
 /*
   The following code file is divided into 4 sections
