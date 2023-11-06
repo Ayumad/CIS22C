@@ -1,0 +1,380 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+
+using namespace std;
+
+// 1. CLASS: Student
+// This class represents a student with an ID and a name.
+class Student {
+private:
+    int sid;  // Student ID
+    string sname; // Student name
+
+public:
+    Student() : sid(0), sname("") {}
+    Student(const Student& os) : sid(os.sid), sname(os.sname) {}
+    Student(int id, string name) : sid(id), sname(name) {}
+    string getName() const { return sname; }
+    int getId() const { return sid; }
+};
+
+// 2. CLASS: StudentEsa (Extended Student Array)
+template <typename T>
+class StudentEsa {
+private:
+    T** sap;
+    int cnum;
+    int cmz;
+
+public:
+    StudentEsa(int ms) : sap(new T* [ms]), cnum(0), cmz(ms) {}
+    StudentEsa() : StudentEsa(10) {}
+    ~StudentEsa() {
+        for (int i = 0; i < cnum; i++) {
+            delete sap[i];
+        }
+        delete[] sap;
+    }
+    int getSize() const { return cnum; }
+    T* get(int index) const {
+        if (index < 0 || index >= cnum) return nullptr;
+        return sap[index];
+    }
+    int set(T* sp, int index) {
+        if (index < 0 || index >= cnum) return -1;
+        sap[index] = sp;
+        return index;
+    }
+    int insert(T* nsp, int index) {
+        if (index < 0 || index > cnum) return -1;
+        if (cnum == cmz) {
+            cmz *= 2;
+            T** temp = new T * [cmz];
+            for (int i = 0; i < index; i++) temp[i] = sap[i];
+            for (int i = index; i < cnum; i++) temp[i + 1] = sap[i];
+            delete[] sap;
+            sap = temp;
+        }
+        else {
+            for (int i = cnum; i > index; i--) sap[i] = sap[i - 1];
+        }
+        sap[index] = nsp;
+        cnum++;
+        return index;
+    }
+    int remove(int index) {
+        if (index < 0 || index >= cnum) return -1;
+        delete sap[index];
+        for (int i = index; i < cnum - 1; i++) sap[i] = sap[i + 1];
+        cnum--;
+        return cnum;
+    }
+    int append(T* nsp) {
+        return insert(nsp, cnum);
+    }
+    int prepend(T* nsp) {
+        return insert(nsp, 0);
+    }
+};
+
+// 3. CLASS: StudentDQI (Deque Implementation)
+class StudentDQI {
+private:
+    StudentEsa<Student>* soa;
+    unsigned int top;
+    unsigned int btm;
+
+public:
+    StudentDQI(unsigned int size) {
+        soa = new StudentEsa<Student>(2 * size);
+        top = size;
+        btm = size;
+    }
+    ~StudentDQI() {
+        delete soa;
+    }
+    int getSize() {
+        return top - btm;
+    }
+    bool isEmpty() {
+        return (top == btm);
+    }
+    int pushFront(Student* stud) {
+        if (btm == 0) {
+            btm = soa->getSize() - 1;
+        }
+        else {
+            btm--;
+        }
+        soa->set(stud, btm);
+        return btm;
+    }
+    Student* popFront() {
+        if (isEmpty()) return nullptr;
+        Student* stud = soa->get(btm);
+        if (btm == soa->getSize() - 1) {
+            btm = 0;
+        }
+        else {
+            btm++;
+        }
+        return stud;
+    }
+    Student* lookFront() {
+        if (isEmpty()) return nullptr;
+        return soa->get(btm);
+    }
+    int pushBack(Student* stud) {
+        soa->set(stud, top);
+        if (top == soa->getSize() - 1) {
+            top = 0;
+        }
+        else {
+            top++;
+        }
+        return top - 1;
+    }
+    Student* popBack() {
+        if (isEmpty()) return nullptr;
+        if (top == 0) {
+            top = soa->getSize() - 1;
+        }
+        else {
+            top--;
+        }
+        return soa->get(top);
+    }
+    Student* lookBack() {
+        if (isEmpty()) return nullptr;
+        unsigned int prevTop = (top == 0) ? soa->getSize() - 1 : top - 1;
+        return soa->get(prevTop);
+    }
+    void printDeque() {
+        if (isEmpty()) {
+            cout << "Deque is empty." << endl;
+            return;
+        }
+        cout << "Deque contents:" << endl;
+        unsigned int idx = btm;
+        while (idx != top) {
+            Student* stud = soa->get(idx);
+            if (stud) {
+                cout << "ID: " << stud->getId() << ", Name: " << stud->getName() << endl;
+            }
+            else {
+                cout << "Empty slot" << endl;
+            }
+            if (idx == soa->getSize() - 1) {
+                idx = 0;
+            }
+            else {
+                idx++;
+            }
+        }
+        cout << endl;
+    }
+
+
+/*
+// 3. CLASS: StudentDQI (Deque Implementation)
+class StudentDQI {
+private:
+    StudentEsa<Student>* soa;
+    unsigned int top;
+    unsigned int btm;
+
+public:
+    StudentDQI(unsigned int size) {
+        soa = new StudentEsa<Student>(2 * size);
+        top = size;
+        btm = size;
+    }
+    ~StudentDQI() {
+        delete soa;
+    }
+    int getSize() {
+        return top - btm;
+    }
+    bool isEmpty() {
+        return (top == btm);
+    }
+    int pushFront(Student* stud) {
+        btm--;
+        soa->set(stud, btm);
+        return btm;
+    }
+    Student* popFront() {
+        if (isEmpty()) return nullptr;
+        Student* stud = soa->get(btm);
+        btm++;
+        return stud;
+    }
+    Student* lookFront() {
+        if (isEmpty()) return nullptr;
+        return soa->get(btm);
+    }
+    int pushBack(Student* stud) {
+        soa->set(stud, top);
+        top++;
+        return top - 1;
+    }
+    Student* popBack() {
+        if (isEmpty()) return nullptr;
+        top--;
+        return soa->get(top);
+    }
+    Student* lookBack() {
+        if (isEmpty()) return nullptr;
+        return soa->get(top - 1);
+    }
+    void printDeque() {
+        if (isEmpty()) {
+            cout << "Deque is empty." << endl;
+            return;
+        }
+        cout << "Deque contents:" << endl;
+        for (unsigned int i = btm; i < top; i++) {
+            Student* stud = soa->get(i);
+            if (stud) {
+                cout << "ID: " << stud->getId() << ", Name: " << stud->getName() << endl;
+            }
+            else {
+                cout << "Empty slot" << endl;
+            }
+        }
+        cout << endl;
+    }
+
+    */
+};
+
+         int main() {
+         string infileName; // Name of the input file.
+         ifstream inp;  // Input file stream.
+
+         cout << "Use input file: ";
+         cin >> infileName;
+         cout << "Using input file " << infileName << endl << endl;
+
+         inp.open(infileName.c_str());
+         if (!inp) {
+             cerr << "Error: file " << infileName.c_str() << " could not be opened" << endl;
+             exit(1);
+         }
+
+         int ssize; // Size of the extended array.
+         int nops; // Number of commands.
+         char command; // Command character.
+         int num; // Student ID.
+         string name; // Student name.
+
+         inp >> ssize >> nops;
+         cout << "Read Array size " << ssize << " Read # commands " << nops << endl;
+
+         StudentDQI* dqi = new StudentDQI(ssize);
+         Student* stud;
+
+         for (int i = 0; i < nops; i++) {
+             inp >> command >> num >> name;
+             cout << "Command: " << command << " " << num << " " << name << endl;
+
+             switch (command) {
+             case 'S':
+                 cout << "Size: " << dqi->getSize() << endl;
+                 break;
+             case 'Z':
+                 cout << "Empty : " << dqi->isEmpty() << endl;
+                 break;
+             case 'F':
+                 stud = new Student(num, name);
+                 dqi->pushFront(stud);
+                 cout << "Pushed Front " << num << " " << name << endl;
+                 break;
+             case 'G':
+                 stud = dqi->popFront();
+                 if (stud) {
+                     cout << "Pop Front " << stud->getId() << " " << stud->getName() << endl;
+                     delete stud;
+                 }
+                 break;
+             case 'H':
+                 stud = dqi->lookFront();
+                 if (stud) {
+                     cout << "Look Front " << stud->getId() << " " << stud->getName() << endl;
+                 }
+                 break;
+             case 'B':
+                 stud = new Student(num, name);
+                 dqi->pushBack(stud);
+                 cout << "Pushed Back " << num << " " << name << endl;
+                 break;
+             case 'C':
+                 stud = dqi->popBack();
+                 if (stud) {
+                     cout << "Pop Back " << stud->getId() << " " << stud->getName() << endl;
+                     delete stud;
+                 }
+                 break;
+             }
+         }
+
+         dqi->printDeque();
+         delete dqi;
+
+         return 0;
+     }
+
+         /*Use input file: HM2Test.txt
+Using input file HM2Test.txt
+
+Read Array size 400 Read # commands 20
+Command: Z -1 -1
+Empty : 1
+Command: F 12345 KleinmanRonald
+Pushed Front 12345 KleinmanRonald
+Command: Z -1 -1
+Empty : 0
+Command: B 87654 SmithMary
+Pushed Back 87654 SmithMary
+Command: B 54321 BerraYogi
+Pushed Back 54321 BerraYogi
+Command: S -1 -1
+Size: 3
+Command: B 67890 RizzutoPhil
+Pushed Back 67890 RizzutoPhil
+Command: G -1 -1
+Command: G -1 -1
+Command: Z -1 -1
+Empty : 0
+Command: H -1 -1
+Command: D -1 -1
+Command: S -1 -1
+Size: 2
+Command: F 67890 MantleMickey
+Pushed Front 67890 MantleMickey
+Command: B 89300 KoufaxSandy
+Pushed Back 89300 KoufaxSandy
+Command: B 89012 KoufaxSandy
+Pushed Back 89012 KoufaxSandy
+Command: F 99887 MarisRoger
+Pushed Front 99887 MarisRoger
+Command: S -1 -1
+Size: 6
+Command: F 62109 FordWhitey
+Pushed Front 62109 FordWhitey
+Command: B 10200 SkowronMoose
+Pushed Back 10200 SkowronMoose
+Deque contents:
+Empty slot
+Empty slot
+Empty slot
+Empty slot
+Empty slot
+Empty slot
+Empty slot
+Empty slot
+
+
+C:\Users\chadd\source\repos\Get it together now 3\x64\Debug\Get it together now 3.exe (process 32388) exited with code 0.
+Press any key to close this window . . .*/
