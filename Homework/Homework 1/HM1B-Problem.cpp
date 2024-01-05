@@ -79,6 +79,10 @@ StudentEsa(int ms) {
      //       sap = new Student* [cmz = ms]; // sap points to an array of Student pointers of size cmz
      //       cnum = 0; tp = NULL; // Initialize with no pointers currently in array
      //  }
+
+     StudentEsa(int ms){
+        
+     }
        
 StudentEsa ();                // 2. Default Constructor <Comment out, or use some predefined size, and EXPLAIN YOUR CHOICE>
 
