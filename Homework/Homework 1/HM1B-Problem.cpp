@@ -1,5 +1,5 @@
 //  This file will contain all the code for Homework 1. Program execution begins and ends here.
-// Ayush Madhukar CIS 22C Spring
+// Ayush Madhukar CIS 22C Winter
 
 
 using namespace std;
