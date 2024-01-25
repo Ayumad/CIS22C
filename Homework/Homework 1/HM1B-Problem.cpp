@@ -81,11 +81,12 @@ StudentEsa(int ms) {
      //  }
 
      StudentEsa(int ms){
-        
+        sap = new Student* [cmz = ms];
+        cnum = 0; tp = NULL;
      }
        
-StudentEsa ();                // 2. Default Constructor <Comment out, or use some predefined size, and EXPLAIN YOUR CHOICE>
-
+//StudentEsa ();                // 2. Default Constructor <Comment out, or use some predefined size, and EXPLAIN YOUR CHOICE>
+//Commented out since array size will be allocated once student pointers are entered
 StudentEsa (StudentEsa& sep); // 3. Copy Constructor  (what gets copied and what does not?)
 
 ~StudentEsa();                // 4. Default destructor  (what gets freed up and what does not?)
